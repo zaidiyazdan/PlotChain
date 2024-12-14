@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.linear-gradient {
+  background: linear-gradient(
+    179.14deg,
+    rgba(16, 8, 32, 0) -7.14%, /* Almost black with hint of purple */
+    #0a0415 87.01% /* Extremely dark purple, almost black */
+  );
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.4); /* Darker filter */
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3b0a5f; /* Deep, dark aubergine purple */
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2a0642; /* Even darker purple for hover */
+}
+
+/* Scrollbar track */
+::-webkit-scrollbar-track {
+  background: #0a0415; /* Almost pure black with hint of purple */
+}
