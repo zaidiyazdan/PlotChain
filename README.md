@@ -1,76 +1,116 @@
-# FundBloc Crowdfunding Platform
+# Land Registry Smart Contract
 
-FundBloc is a blockchain-based crowdfunding platform designed to facilitate secure, transparent, and efficient funding for innovative projects through smart contracts.
+## Overview
 
-## Smart Contract
+The **LandRegistry** smart contract is designed for managing land ownership and transactions on the Ethereum blockchain. It enables the registration, transfer, and sale of lands, ensuring secure and transparent record-keeping. 
 
-The core functionality of the FundBloc platform is powered by a smart contract written in Solidity
+## Features
 
-### Functions
+- **Land Registration:** Allows users to register lands with details like location, area, and price.
+- **Ownership Transfer:** Enables landowners to transfer ownership to another address.
+- **Land Sale Listing:** Landowners can list their lands for sale, setting a price in wei.
+- **Land Purchase:** Facilitates purchasing of listed lands by transferring ownership and funds.
+- **Fetch All Lands:** Provides a list of all registered lands for external systems to display.
 
-1. **createCampaign**
-   ```solidity
-   function createCampaign(address _owner, string memory _title, string memory _description, uint256 _target, uint256 _deadline, string memory _image) public returns (uint256)
-   ```
-   - Creates a new crowdfunding campaign.
-   - Parameters:
-     - `_owner`: The address of the campaign owner.
-     - `_title`: The title of the campaign.
-     - `_description`: A brief description of the campaign.
-     - `_target`: The funding goal for the campaign.
-     - `_deadline`: The campaign deadline (timestamp).
-     - `_image`: URL to the campaign image.
-   - Returns:
-     - The campaign ID.
+---
 
-2. **donateToCampaign**
-   ```solidity
-   function donateToCampaign(uint256 _id) public payable
-   ```
-   - Allows users to donate to a specific campaign.
-   - Parameters:
-     - `_id`: The ID of the campaign to donate to.
-   - The donation amount is the value sent with the transaction.
+## Prerequisites
 
-3. **getDonators**
-   ```solidity
-   function getDonators(uint256 _id) view public returns (address[] memory, uint256[] memory)
-   ```
-   - Retrieves the list of donators and their respective donations for a specific campaign.
-   - Parameters:
-     - `_id`: The ID of the campaign.
-   - Returns:
-     - Two arrays: one with the addresses of the donators and another with their corresponding donation amounts.
+- **Solidity Version:** `^0.8.9`
+- **Blockchain Network:** Ethereum or Ethereum-compatible network
+- **Tools:** 
+  - A wallet (e.g., MetaMask)
+  - An IDE like Remix or Hardhat for deployment
 
-4. **getCampaigns**
-   ```solidity
-   function getCampaigns() public view returns (Campaign[] memory)
-   ```
-   - Retrieves all the campaigns created on the platform.
-   - Returns:
-     - An array of all campaign structures.
+---
 
-## Getting Started
+## Contract Structure
 
-1. **Clone the repository**
-   ```sh
-   git clone https://github.com/yourusername/fundbloc.git
-   ```
+### 1. **Data Structures**
+- **`struct Land`:** Holds information about each land, such as:
+  - `id`: Unique identifier
+  - `owner`: Current owner of the land
+  - `location`: Physical location of the land
+  - `area`: Area in square meters
+  - `price`: Price in wei
+  - `isForSale`: Whether the land is listed for sale
 
-2. **Navigate to the project directory**
-   ```sh
-   cd fundbloc
-   ```
+- **`mapping(uint256 => Land) lands`:** Maps each land ID to its details.
 
-3. **Compile the smart contract**
-   Ensure you have [Solidity](https://docs.soliditylang.org/en/v0.8.9/installing-solidity.html) installed and compile the `CrowdFunding` contract using your preferred method (e.g., using Remix IDE or Hardhat).
+- **`uint256 totalLands`:** Counter to track the number of lands registered.
 
-4. **Deploy the smart contract**
-   Deploy the contract to your preferred Ethereum network (e.g., using Remix IDE, Truffle, or Hardhat).
+---
 
-5. **Interact with the smart contract**
-   Use the deployed contract address to interact with the contract functions using a web3 interface (e.g., web3.js, ethers.js) or directly via Remix IDE.
+### 2. **Events**
+- **`LandRegistered(uint256 id, address owner, string location, uint256 area, uint256 price)`:**
+  - Emitted when a new land is registered.
+- **`OwnershipTransferred(uint256 id, address oldOwner, address newOwner)`:**
+  - Emitted when ownership of a land is transferred.
+- **`LandListedForSale(uint256 id, uint256 price)`:**
+  - Emitted when a land is listed for sale.
 
-## License
+---
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+### 3. **Functions**
+#### **`registerLand(string _location, uint256 _area, uint256 _price)`**
+- Registers a new land with the given location, area, and price.
+- **Requirements:**
+  - `_area` must be greater than 0.
+  - `_price` must be greater than 0.
+
+#### **`transferOwnership(uint256 _id, address _newOwner)`**
+- Transfers ownership of a land to a new owner.
+- **Requirements:**
+  - Caller must be the current owner.
+  - `_newOwner` must not be a zero address.
+
+#### **`listForSale(uint256 _id, uint256 _price)`**
+- Lists a land for sale with a specified price.
+- **Requirements:**
+  - Caller must be the owner of the land.
+  - `_price` must be greater than 0.
+
+#### **`purchaseLand(uint256 _id)`**
+- Allows a user to purchase a listed land.
+- **Requirements:**
+  - Land must be marked as `isForSale`.
+  - Payment (`msg.value`) must be equal to or exceed the price.
+
+#### **`getAllLands()`**
+- Returns an array of all registered lands for display or analysis.
+
+---
+
+## Usage Instructions
+
+### Deployment
+1. Deploy the contract on an Ethereum-compatible network using an IDE like Remix or a framework like Hardhat.
+2. Once deployed, the contract address will be available for interaction.
+
+### Interaction
+- Use the following methods to interact with the contract:
+  1. **Register Land:**
+     Call `registerLand` with the location, area, and price.
+  2. **List Land for Sale:**
+     Call `listForSale` with the land ID and price.
+  3. **Purchase Land:**
+     Call `purchaseLand` with the land ID, sending the appropriate ether value.
+  4. **Transfer Ownership:**
+     Call `transferOwnership` with the land ID and the new owner's address.
+  5. **Fetch All Lands:**
+     Call `getAllLands` to retrieve details of all lands.
+
+---
+
+## Security Considerations
+- Ensure only the owner of a land can list it for sale or transfer ownership.
+- Use secure Ethereum wallets to interact with the contract.
+- Do not send ether directly to the contract address; always use the `purchaseLand` function.
+
+---
+
+## Example Scenarios
+
+### Registering a Land
+```solidity
+registerLand("Downtown", 1000, 5000000000000000000); // 5 Ether
