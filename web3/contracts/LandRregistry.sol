@@ -7,7 +7,7 @@ contract LandRegistry {
         uint256 id;
         address owner;
         string location;
-        string address;
+        //string address;
         uint256 area; // Area in square meters
         uint256 price; // Price in wei
         bool isForSale;
@@ -79,7 +79,7 @@ contract LandRegistry {
         require(_id < totalLands, "Invalid land ID.");
         Land storage land = lands[_id];
         require(land.isForSale, "This land is not for sale.");
-        require(msg.value >= land.price, "Insufficient payment.");
+        // require(msg.value >= land.price, "Insufficient payment.");
 
         address oldOwner = land.owner;
         land.owner = msg.sender;
